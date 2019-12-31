@@ -45,10 +45,45 @@ function queryOne(sqlStr) {
         })
     })
 }
-// 查询返回的是数组
-// 增删改返回的是对象
 
+function insert(model, tableName) {
+    return new Promise((resolve, reject) => {
+        if (!Object.prototype.toString.call(model) === "[object Object]") {
+            reject('添加图书对象不合法')
+        } else {
+            const keys = []
+            const values = []
+            Object.keys(model).forEach(key => {
+                console.log('eky', key, model[key])
+                if (model.hasOwnProperty(key)) {
+                    keys.push(`\`${key}\``)
+                    values.push(`'${model[key] || null}'`)
+                }
+            })
+            if (keys.length > 0 && values.length > 0) {
+                let sql = `INSERT INTO \`${tableName}\`(`
+                const keysString = keys.join(',')
+                const valuesString = values.join(',')
+                sql = `${sql}${keysString}) VALUES(${valuesString})`
+                debug && console.log(sql, '222')
+            }
+        }
+
+        // 从连接池里面拿一个连接
+        query(sqlStr).then(result => {
+            debug && console.log(sqlStr, '******')
+            if (result && result.length > 0) {
+                resolve(result[0]);
+            } else {
+                reject(null);
+            }
+        }).catch(err => {
+            reject(err);
+        })
+    })
+}
 module.exports = {
     query,
-    queryOne
+    queryOne,
+    insert
 }
