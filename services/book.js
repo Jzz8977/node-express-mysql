@@ -21,7 +21,7 @@ function insertBook(book) {
                 } else {
                     await db.insert(book, 'book')
                     await insertContents(book)
-                    res()
+                    res() 
                 }
             } else {
                 rej(new Error('添加图书对象不合法'))
